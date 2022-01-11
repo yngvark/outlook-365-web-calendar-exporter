@@ -1,7 +1,9 @@
 import { WebSocketServer } from 'ws';
 import { exec } from 'child_process';
 
-const testing = true
+const testing = false
+
+// To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
 
 if (testing) {
     let text = `[{"label":"event from Tuesday, January 11, 2022 09:00 to 10:00 Planning   ` +
@@ -24,11 +26,21 @@ wss.on('connection', function connection(ws) {
     ws.on('message', function message(text) {
         // console.log('received: %s', text);
         let calendarData = JSON.parse(text)
-        setAlarms(calendarData)
+
+        let alarms = createAlarms(calendarData)
+        if (alarms.length > 10) {
+            runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
+            runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
+            runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
+            return
+        }
+
+        setAlarms(alarms)
     });
 });
 
-function setAlarms(calendarEvents) {
+function createAlarms(calendarEvents) {
+    let alarms = []
     for (const calendarEvent of calendarEvents) {
         let startDate
         try {
@@ -37,14 +49,25 @@ function setAlarms(calendarEvents) {
             continue
         }
 
-        console.log("Creating alert for", calendarEvent)
-
         let atTime = toAtTime(startDate)
         let meetingTitle = calendarEvent.title.split('\n')[0]
 
-        alert(meetingTitle, atTime)
+        alarms.push({
+            atTime,
+            meetingTitle
+        })
+    }
+
+    return alarms
+}
+
+function setAlarms(alarms) {
+    for (const a of alarms) {
+        alert(a.meetingTitle, a.atTime)
     }
 }
+
+
 
 function parseStartDateFromLabel(text) {
     if (!text.startsWith("event from")) {
@@ -88,6 +111,8 @@ function fillZeroes(hours) {
 }
 
 function alert(message, atTime) {
+    console.log("Creating alert for", atTime, message)
+
     // -i icons list: https://askubuntu.com/a/189262/575647
     let escaped = escape(message)
     let cmd = `echo notify-send -i face-glasses "${escaped} XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" | at ${atTime}`
@@ -136,6 +161,8 @@ function runCmd(cmd) {
             return;
         }
 
-        console.log(`stdout: ${stdout}`);
+        if (stdout.length > 0) {
+            console.log(`stdout: ${stdout}`);
+        }
     });
 }
