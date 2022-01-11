@@ -21,8 +21,6 @@ function waitForElm(selector) {
 waitForElm("div[aria-label*='event from']").then((elm) => {
     // Element is almost ready, using a setTimeout to be actual ready
     setTimeout(function() {
-        console.log(elm.textContent);
-
         // Test in browser console with: $("div[aria-label*='event from']")
         let calendarEvents = document.querySelectorAll("div[aria-label*='event from']")
 
@@ -40,13 +38,11 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
             calendarData.push(entry)
         }
 
-        console.log("Connecting...")
         let ws = new WebSocket("ws://localhost:37123");
-        console.log("Connected!")
 
         ws.onopen = function (event) {
-            console.log("Sending", calendarData)
+            console.log("Connected to outlook exporter backound. Sending calendar data.", calendarData)
             ws.send(JSON.stringify(calendarData))
         }
-    }, 3000);
+    }, 1000);
 });

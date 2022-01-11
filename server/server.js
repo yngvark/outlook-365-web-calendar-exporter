@@ -42,7 +42,7 @@ function main() {
     console.log("Listening for connections...")
 
     wss.on('connection', function connection(ws) {
-        console.log("client connected")
+        console.log("Client connected.")
 
         ws.on('message', function message(text) {
             handleCalendarEvents(text)
@@ -162,7 +162,7 @@ function alert(message, atTime) {
     runCmd(cmd)
     runCmd(cmd)
 
-    runCmd(`echo aplay '$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/charge.wav' | at ${atTime}`)
+    runCmd(`echo aplay '$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alarm.wav' | at ${atTime}`)
 }
 
 function escape(msg) {
@@ -182,10 +182,10 @@ function escape(msg) {
 
 function runCmd(cmd) {
     if (testing) {
-        console.log("not running command:", cmd)
+        console.log("Not running command:", cmd)
         return
     } else {
-        console.log("running command:", cmd)
+        console.log("Running command:", cmd)
     }
 
     exec(cmd, (error, stdout, stderr) => {
