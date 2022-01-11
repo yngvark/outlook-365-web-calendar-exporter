@@ -42,6 +42,7 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
         console.log(elm.textContent);
 
 
+        // Test in browser console with: $("div[aria-label*='event from']")
         let calendarDataInput = document.querySelectorAll("div[aria-label*='event from']")
 
         let calendarData = []

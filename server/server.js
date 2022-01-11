@@ -9,15 +9,28 @@ class Alarm {
         this.time = time
         this.meetingTitle = meetingTitle
     }
+
+    hash() {
+        return this.time.getTime()
+    }
 }
 
 const testing = false
 
 // To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
 if (testing) {
-    let text = `[{"label":"event from Tuesday, January 11, 2022 09:00 to 10:00 Planning   ` +
-        `location https://whereby.com/somwehere organizer Guybrush Threepwood","title":"Planning\\n` +
-        `https://whreby.com/somewhere\\nfrom 09:00 to 10:00"}]`
+    let text = `
+        [
+            {
+                "label": "event from Tuesday, January 11, 2022 09:00 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
+                "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
+            },
+            {
+                "label": "event from Tuesday, January 11, 2022 09:00 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
+                "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
+            }
+        ]
+    `
     handleCalendarEvents(text)
 } else {
     main()
@@ -38,7 +51,7 @@ function main() {
 }
 
 function handleCalendarEvents(calendarEventsRaw) {
-    // console.log('received: %s', text);
+    // console.log('received: %s', calendarEventsRaw);
     let calendarData = JSON.parse(calendarEventsRaw)
 
     let alarms = createAlarms(calendarData)
@@ -49,7 +62,8 @@ function handleCalendarEvents(calendarEventsRaw) {
         return
     }
 
-    setAlarms(alarms)
+    let deDuplicated = removeDuplicates(alarms)
+    setAlarms(deDuplicated)
 }
 
 function createAlarms(calendarEvents) {
@@ -71,13 +85,26 @@ function createAlarms(calendarEvents) {
     return alarms
 }
 
+function removeDuplicates(alarms) {
+    let epochToAlarm = {}
+    let deDuplicated = []
+
+    for (const alarm of alarms) {
+        epochToAlarm[alarm.hash()] = alarm
+    }
+
+    for (const [key, alarm] of Object.entries(epochToAlarm)) {
+        deDuplicated.push(alarm)
+    }
+
+    return deDuplicated
+}
+
 function setAlarms(alarms) {
     for (const a of alarms) {
         alert(a.meetingTitle, toAtTime(a.time))
     }
 }
-
-
 
 function parseStartDateFromLabel(text) {
     if (!text.startsWith("event from")) {
