@@ -15,10 +15,20 @@ class Alarm {
     }
 }
 
-const testing = false
+const testing = true
 
 // To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
 if (testing) {
+    let text = `
+        [
+            {
+                "label": "event from Tuesday, January 11, 2022 23:26 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
+                "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
+            }
+        ]
+    `
+
+    /*
     let text = `
         [
             {
@@ -26,11 +36,12 @@ if (testing) {
                 "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
             },
             {
-                "label": "event from Tuesday, January 11, 2022 09:00 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
+                "label": "event from Tuesday, January 11, 2022 23:21 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
                 "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
             }
         ]
     `
+    */
     handleCalendarEvents(text)
 } else {
     main()
@@ -109,7 +120,7 @@ function setAlarms(alarms) {
 }
 
 function cleanOldAlarms() {
-    runCmd("atclean")
+    runCmd("$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/atclean.sh")
 }
 
 function parseStartDateFromLabel(text) {
@@ -155,14 +166,8 @@ function fillZeroes(hours) {
 function alert(message, atTime) {
     console.log("Creating alert for", atTime, message)
 
-    // -i icons list: https://askubuntu.com/a/189262/575647
-    let escaped = escape(message)
-    let cmd = `echo notify-send -i face-glasses "${escaped} XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" | at ${atTime}`
-    runCmd(cmd)
-    runCmd(cmd)
-    runCmd(cmd)
-
-    runCmd(`echo aplay '$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alarm.wav' | at ${atTime}`)
+    let atTimeUrlEncoded = encodeURIComponent(atTime)
+    runCmd(`$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alert.sh "${atTime}" "${atTimeUrlEncoded}" "${message}"`)
 }
 
 function escape(msg) {
@@ -182,11 +187,10 @@ function escape(msg) {
 
 function runCmd(cmd) {
     if (testing) {
-        console.log("Not running command:", cmd)
-        return
-    } else {
-        console.log("Running command:", cmd)
+        // return
     }
+
+    console.log("Running command:", cmd)
 
     exec(cmd, (error, stdout, stderr) => {
         if (error) {
