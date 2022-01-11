@@ -1,0 +1,19 @@
+{
+  "name": "office 365 web exporter2",
+  "description": "Export data from Office 365 Web to a websocket",
+  "version": "1.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": { "48": "owl-head.png" },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://outlook.office.com/calendar/view/month/"
+  ]
+}
