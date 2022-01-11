@@ -1,18 +1,3 @@
-console.log("YK FOREGROUND");
-
-function ready(fn) {
-    if (document.readyState != 'loading') {
-        fn();
-    } else if (document.addEventListener) {
-        document.addEventListener('DOMContentLoaded', fn);
-    } else {
-        document.attachEvent('onreadystatechange', function() {
-            if (document.readyState != 'loading')
-                fn();
-        });
-    }
-}
-
 function waitForElm(selector) {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
@@ -34,22 +19,18 @@ function waitForElm(selector) {
 }
 
 waitForElm("div[aria-label*='event from']").then((elm) => {
-// waitForElm(".root-268").then((elm) => {
-    console.log('Element is aalmost ready');
-
+    // Element is almost ready, using a setTimeout to be actual ready
     setTimeout(function() {
-
         console.log(elm.textContent);
 
-
         // Test in browser console with: $("div[aria-label*='event from']")
-        let calendarDataInput = document.querySelectorAll("div[aria-label*='event from']")
+        let calendarEvents = document.querySelectorAll("div[aria-label*='event from']")
 
         let calendarData = []
 
-        for (let i = 0; i < calendarDataInput.length; i++) {
-            let title = calendarDataInput[i].getAttribute("title")
-            let label  = calendarDataInput[i].getAttribute("aria-label")
+        for (const event of calendarEvents) {
+            let title = event.getAttribute("title")
+            let label  = event.getAttribute("aria-label")
 
             let entry = {
                 title: title,
@@ -59,9 +40,8 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
             calendarData.push(entry)
         }
 
-
         console.log("Connecting...")
-        ws = new WebSocket("ws://localhost:8080");
+        let ws = new WebSocket("ws://localhost:37123");
         console.log("Connected!")
 
         ws.onopen = function (event) {
@@ -69,22 +49,4 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
             ws.send(JSON.stringify(calendarData))
         }
     }, 3000);
-});
-
-
-// // test
-window.ready(function() {
-
-    setTimeout(function() {
-        console.log("HEEHY")
-
-        console.log( "ready!" );
-        let calendarData = document.querySelectorAll("div[aria-label*='event from']")
-        console.log("cal data ACTUAL", calendarData)
-
-    }, 500)
-
-    // ws.onopen = function(event) {
-    //     ws.send("hello")
-    // }
 });
