@@ -1,43 +1,56 @@
 import { WebSocketServer } from 'ws';
 import { exec } from 'child_process';
 
+class ValidationError extends Error {
+}
+
+class Alarm {
+    constructor(time, meetingTitle) {
+        this.time = time
+        this.meetingTitle = meetingTitle
+    }
+}
+
 const testing = false
 
 // To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
-
 if (testing) {
     let text = `[{"label":"event from Tuesday, January 11, 2022 09:00 to 10:00 Planning   ` +
         `location https://whereby.com/somwehere organizer Guybrush Threepwood","title":"Planning\\n` +
         `https://whreby.com/somewhere\\nfrom 09:00 to 10:00"}]`
-    let calendarData = JSON.parse(text)
-    setAlarms(calendarData)
+    handleCalendarEvents(text)
+} else {
+    main()
 }
 
-class ValidationError extends Error {
-}
+function main() {
+    const wss = new WebSocketServer({ port: 8080 });
 
-const wss = new WebSocketServer({ port: 8080 });
+    console.log("Listening for connections...")
 
-console.log("Listening for connections...")
+    wss.on('connection', function connection(ws) {
+        console.log("client connected")
 
-wss.on('connection', function connection(ws) {
-    console.log("client connected")
-
-    ws.on('message', function message(text) {
-        // console.log('received: %s', text);
-        let calendarData = JSON.parse(text)
-
-        let alarms = createAlarms(calendarData)
-        if (alarms.length > 10) {
-            runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
-            runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
-            runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
-            return
-        }
-
-        setAlarms(alarms)
+        ws.on('message', function message(text) {
+            handleCalendarEvents(text)
+        });
     });
-});
+}
+
+function handleCalendarEvents(calendarEventsRaw) {
+    // console.log('received: %s', text);
+    let calendarData = JSON.parse(calendarEventsRaw)
+
+    let alarms = createAlarms(calendarData)
+    if (alarms.length > 10) {
+        runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
+        runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
+        runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
+        return
+    }
+
+    setAlarms(alarms)
+}
 
 function createAlarms(calendarEvents) {
     let alarms = []
@@ -45,17 +58,14 @@ function createAlarms(calendarEvents) {
         let startDate
         try {
             startDate = parseStartDateFromLabel(calendarEvent.label)
+            startDate.setMinutes(startDate.getMinutes() - 1)
         } catch (e) {
             continue
         }
 
-        let atTime = toAtTime(startDate)
         let meetingTitle = calendarEvent.title.split('\n')[0]
 
-        alarms.push({
-            atTime,
-            meetingTitle
-        })
+        alarms.push(new Alarm(startDate, meetingTitle))
     }
 
     return alarms
@@ -63,7 +73,7 @@ function createAlarms(calendarEvents) {
 
 function setAlarms(alarms) {
     for (const a of alarms) {
-        alert(a.meetingTitle, a.atTime)
+        alert(a.meetingTitle, toAtTime(a.time))
     }
 }
 
