@@ -15,7 +15,7 @@ class Alarm {
     }
 }
 
-const testing = true
+const testing = false
 
 // To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
 if (testing) {
@@ -187,7 +187,7 @@ function escape(msg) {
 
 function runCmd(cmd) {
     if (testing) {
-        // return
+        return
     }
 
     console.log("Running command:", cmd)
