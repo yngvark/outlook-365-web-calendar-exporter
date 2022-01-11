@@ -37,7 +37,7 @@ if (testing) {
 }
 
 function main() {
-    const wss = new WebSocketServer({ port: 8080 });
+    const wss = new WebSocketServer({ port: 37123 });
 
     console.log("Listening for connections...")
 
@@ -101,9 +101,15 @@ function removeDuplicates(alarms) {
 }
 
 function setAlarms(alarms) {
+    cleanOldAlarms()
+
     for (const a of alarms) {
         alert(a.meetingTitle, toAtTime(a.time))
     }
+}
+
+function cleanOldAlarms() {
+    runCmd("atclean")
 }
 
 function parseStartDateFromLabel(text) {
@@ -138,7 +144,6 @@ function parseStartDateFromLabel(text) {
 
 // at means the linux tool "at" (see "man at")
 // example output: 23:45
-
 function toAtTime(d) {
     return fillZeroes(d.getHours()) + ":" + fillZeroes(d.getMinutes())
 }
@@ -153,10 +158,10 @@ function alert(message, atTime) {
     // -i icons list: https://askubuntu.com/a/189262/575647
     let escaped = escape(message)
     let cmd = `echo notify-send -i face-glasses "${escaped} XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" | at ${atTime}`
+    runCmd(cmd)
+    runCmd(cmd)
+    runCmd(cmd)
 
-    runCmd(cmd)
-    runCmd(cmd)
-    runCmd(cmd)
     runCmd(`echo aplay '$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/charge.wav' | at ${atTime}`)
 }
 
