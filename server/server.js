@@ -1,5 +1,5 @@
 import { WebSocketServer } from 'ws';
-import { exec } from 'child_process';
+import { execSync } from 'child_process';
 
 class ValidationError extends Error {
 }
@@ -192,7 +192,7 @@ function runCmd(cmd) {
 
     console.log("Running command:", cmd)
 
-    exec(cmd, (error, stdout, stderr) => {
+    execSync(cmd, (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
             return;
