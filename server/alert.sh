@@ -2,6 +2,16 @@
 : "${YK_GIT_DIR:?Needs to be non-empty.}"
 : "${IFTTT_KEY:?Needs to be non-empty.}"
 
+ME=$(basename ${BASH_SOURCE[0]})
+
+if [[ $* == "-h" || $* == "--help" || "$#" -eq 0 ]]
+then
+    echo "USAGE:"
+    echo "$ME <HOUR:MINUTE> <same URL formatted> <MSG>"
+    echo "$ME 22:00 22%3A00 hello"
+    return 0 2> /dev/null || exit 0
+fi
+
 AT_TIME=$1
 AT_TIME_URL_ENCODED=$2
 MSG=$3
