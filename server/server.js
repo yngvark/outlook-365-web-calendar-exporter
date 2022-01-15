@@ -66,7 +66,7 @@ function handleCalendarEvents(calendarEventsRaw) {
     let calendarData = JSON.parse(calendarEventsRaw)
 
     let alarms = createAlarms(calendarData)
-    if (alarms.length > 10) {
+    if (alarms.length > 12) {
         runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
         runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
         runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
@@ -147,6 +147,11 @@ function parseStartDateFromLabel(text) {
     // let endTime = new Date(Date.parse(day + " " + endHour))
 
     if (startTime.getDate() !== new Date().getDate()) {
+        throw ValidationError()
+    }
+
+    if (startTime < new Date()) {
+        // Can't create alarms in the past
         throw ValidationError()
     }
 
