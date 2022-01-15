@@ -2,6 +2,13 @@ Chrome extention to export data from Outlook 365's calendar to a websocket.
 
 # Installasjon
 
+## Sett opp miljø
+
+Sett miljøvaribaler
+
+* YK_GIT_DIR
+* IFTTT_KEY
+
 ## 1. Installer Chrome extension
 
 1. Klon eller last ned git repositroy
