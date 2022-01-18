@@ -46,16 +46,19 @@ Environment=PATH=/usr/bin:/usr/local/bin
 Environment=YK_GIT_DIR=/home/xxxxxxxxxxxxxxx
 Environment=IFTTT_KEY=xxxxxxxxxxxxxxxxxxxx
 WorkingDirectory=/xxxxxxxxx/outlook-365-web-calendar-exporter/server
+
+[Install]
+WantedBy=multi-user.target
 ```
 
 ```shell
 sudo systemctl daemon-reload
 sudo systemctl start outlook-exporter
+sudo systemctl enable outlook-exporter
 
 journalctl -xe # For å se litt logger
 tail -f /var/log/syslog # For å se litt andre logger
 ```
-
 
 
 ### Alternativ: Forever
