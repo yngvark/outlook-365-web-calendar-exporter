@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws';
 import { execSync } from 'child_process';
+// import * as fs from 'fs'
 
 class ValidationError extends Error {
 }
@@ -13,6 +14,20 @@ class Alarm {
     hash() {
         return this.time.getTime()
     }
+}
+
+function log(msg) {
+    console.log(msg)
+
+    /*
+    // write t ofile
+    let stream = fs.createWriteStream("log.txt", {flags:'a'})
+    let d = new Date()
+    let now = d.toDateString() + " " + d.toLocaleTimeString()
+    let out = "[" + now + "] " + msg + "\n"
+    stream.write(out);
+    stream.end();
+    */
 }
 
 const testing = false
@@ -50,10 +65,10 @@ if (testing) {
 function main() {
     const wss = new WebSocketServer({ port: 37123 });
 
-    console.log("Listening for connections...")
+    log("Listening for connections...")
 
     wss.on('connection', function connection(ws) {
-        console.log("Client connected.")
+        log("Client connected.")
 
         ws.on('message', function message(text) {
             handleCalendarEvents(text)
@@ -62,7 +77,7 @@ function main() {
 }
 
 function handleCalendarEvents(calendarEventsRaw) {
-    // console.log('received: %s', calendarEventsRaw);
+    // log('received: %s', calendarEventsRaw);
     let calendarData = JSON.parse(calendarEventsRaw)
 
     let alarms = createAlarms(calendarData)
@@ -169,7 +184,7 @@ function fillZeroes(hours) {
 }
 
 function alert(message, atTime) {
-    console.log("Creating alert for", atTime, message)
+    log("Creating alert for " + atTime + " - " + message)
 
     let atTimeUrlEncoded = encodeURIComponent(atTime)
     runCmd(`$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alert.sh "${atTime}" "${atTimeUrlEncoded}" "${message}"`)
@@ -195,11 +210,11 @@ function runCmd(cmd) {
         return
     }
 
-    console.log("Running command:", cmd)
+    log("Running command: " + cmd)
 
     execSync(cmd, (error, stdout, stderr) => {
         if (error) {
-            console.log(`error: ${error.message}`);
+            log(`error: ${error.message}`);
             return;
         }
 
@@ -208,12 +223,12 @@ function runCmd(cmd) {
                 return
             }
 
-            console.log(`stderr: ${stderr}`);
+            log(`stderr: ${stderr}`);
             return;
         }
 
         if (stdout.length > 0) {
-            console.log(`stdout: ${stdout}`);
+            log(`stdout: ${stdout}`);
         }
     });
 }
