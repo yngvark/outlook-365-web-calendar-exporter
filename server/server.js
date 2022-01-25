@@ -34,7 +34,7 @@ const testing = false
 
 // To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
 if (testing) {
-    let text = `
+    let text1 = `
         [
             {
                 "label": "event from Tuesday, January 11, 2022 23:26 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
@@ -43,21 +43,19 @@ if (testing) {
         ]
     `
 
-    /*
-    let text = `
-        [
-            {
-                "label": "event from Tuesday, January 11, 2022 09:00 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
-                "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
-            },
-            {
-                "label": "event from Tuesday, January 11, 2022 23:21 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
-                "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
-            }
-        ]
+    let text2 = `
+[
+    {
+        "label": "in 25 min event from Tuesday, January 25, 2022 10:30 to 11:00 Standup X4b location https://origo.whereby.com/kj%C3%B8remilj%C3%B8 organizer Nikolai Adam Czajkowski recurring",
+        "title": "Standup\\nhttps://origo.whereby.com/kj%C3%B8remilj%C3%B8\\nfrom 10:30 to 11:00"
+    },
+    {
+        "label": "event from Tuesday, January 25, 2022 14:30 to 15:00 FIB for styret i Origo-Tekna X4b organizer Trine Håve",
+        "title": "FIB for styret i Origo-Tekna\\nfrom 14:30 to 15:00"
+    }
+]
     `
-    */
-    handleCalendarEvents(text)
+    handleCalendarEvents(text2)
 } else {
     main()
 }
@@ -71,14 +69,19 @@ function main() {
         log("Client connected.")
 
         ws.on('message', function message(text) {
-            handleCalendarEvents(text)
+            handleCalendarEvents(text + "")
         });
     });
 }
 
 function handleCalendarEvents(calendarEventsRaw) {
+    console.log("--- RAW JSON ---")
+    console.log(calendarEventsRaw)
+
     let calendarData = JSON.parse(calendarEventsRaw)
-    console.log('Received from client: ', calendarData);
+
+    console.log("--- FORMATTED JSON ---")
+    console.log(calendarData);
 
     let alarms = createAlarms(calendarData)
     if (alarms.length > 12) {
@@ -140,7 +143,7 @@ function cleanOldAlarms() {
 
 function parseStartDateFromLabel(text) {
     if (!text.startsWith("event from")) {
-        throw ValidationError()
+        throw new ValidationError()
     }
 
     let currentYear = new Date().getFullYear()
@@ -148,7 +151,7 @@ function parseStartDateFromLabel(text) {
     let dayMatches = text.match(dayRegex)
 
     if (dayMatches == null) {
-        throw ValidationError()
+        throw new ValidationError()
     }
 
     let day = dayMatches[1]
@@ -162,12 +165,12 @@ function parseStartDateFromLabel(text) {
     // let endTime = new Date(Date.parse(day + " " + endHour))
 
     if (startTime.getDate() !== new Date().getDate()) {
-        throw ValidationError()
+        throw new ValidationError()
     }
 
     if (startTime < new Date()) {
         // Can't create alarms in the past
-        throw ValidationError()
+        throw new ValidationError()
     }
 
     return startTime

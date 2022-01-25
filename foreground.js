@@ -41,8 +41,10 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
         let ws = new WebSocket("ws://localhost:37123");
 
         ws.onopen = function (event) {
-            console.log("Connected to outlook exporter backound. Sending calendar data.", new Date(), calendarData)
-            ws.send(JSON.stringify(calendarData))
+            let txt = JSON.stringify(calendarData)
+            console.log("Connected to outlook exporter backound. Sending calendar data.", new Date())
+            console.log(txt)
+            ws.send(txt)
         }
     }, 1000);
 });
