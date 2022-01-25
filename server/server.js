@@ -77,7 +77,7 @@ function main() {
 }
 
 function handleCalendarEvents(calendarEventsRaw) {
-    // log('received: %s', calendarEventsRaw);
+    log('received: %s', calendarEventsRaw);
     let calendarData = JSON.parse(calendarEventsRaw)
 
     let alarms = createAlarms(calendarData)
