@@ -77,8 +77,8 @@ function main() {
 }
 
 function handleCalendarEvents(calendarEventsRaw) {
-    console.log('Received from client: ', calendarEventsRaw);
     let calendarData = JSON.parse(calendarEventsRaw)
+    console.log('Received from client: ', calendarData);
 
     let alarms = createAlarms(calendarData)
     if (alarms.length > 12) {
