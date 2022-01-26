@@ -101,7 +101,7 @@ function createAlarms(calendarEvents) {
         let startDate
         try {
             startDate = parseStartDateFromLabel(calendarEvent.label)
-            startDate.setMinutes(startDate.getMinutes() - 2)
+            startDate.setMinutes(startDate.getMinutes() - 1)
         } catch (e) {
             continue
         }
