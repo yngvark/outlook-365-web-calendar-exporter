@@ -1,7 +1,7 @@
 {
   "name": "office 365 web exporter2",
   "description": "Export data from Office 365 Web to a websocket",
-  "version": "1.0",
+  "version": "0.0.10",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
