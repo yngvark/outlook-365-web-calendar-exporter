@@ -1,20 +1,31 @@
-import { WebSocketServer } from 'ws';
-import { execSync } from 'child_process';
+import { WebSocketServer } from 'ws'
+import { execSync } from 'child_process'
+import { Alarm } from './alarm.js'
+import { ValidationError } from './validation_error.js'
 // import * as fs from 'fs'
 
-class ValidationError extends Error {
+const testing = false
+// const SERVER_PORT = 37124
+const SERVER_PORT = 37123
+
+// To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
+if (testing) {
+    let text1 = `
+        [
+            {
+                "label": "event from Tuesday, January 11, 2022 23:26 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
+                "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
+            }
+        ]
+    `
+
+    let text2 = `
+    `
+    handleCalendarEvents(text2)
+} else {
+    main()
 }
 
-class Alarm {
-    constructor(time, meetingTitle) {
-        this.time = time
-        this.meetingTitle = meetingTitle
-    }
-
-    hash() {
-        return this.time.getTime()
-    }
-}
 
 function log(msg) {
     console.log(msg)
@@ -30,38 +41,8 @@ function log(msg) {
     */
 }
 
-const testing = false
-
-// To clean jobs: JOBS=$(atq | cut -f 1) && atrm $JOBS
-if (testing) {
-    let text1 = `
-        [
-            {
-                "label": "event from Tuesday, January 11, 2022 23:26 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
-                "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
-            }
-        ]
-    `
-
-    let text2 = `
-[
-    {
-        "label": "in 25 min event from Tuesday, January 25, 2022 10:30 to 11:00 Standup X4b location https://origo.whereby.com/kj%C3%B8remilj%C3%B8 organizer Nikolai Adam Czajkowski recurring",
-        "title": "Standup\\nhttps://origo.whereby.com/kj%C3%B8remilj%C3%B8\\nfrom 10:30 to 11:00"
-    },
-    {
-        "label": "event from Tuesday, January 25, 2022 14:30 to 15:00 FIB for styret i Origo-Tekna X4b organizer Trine Håve",
-        "title": "FIB for styret i Origo-Tekna\\nfrom 14:30 to 15:00"
-    }
-]
-    `
-    handleCalendarEvents(text2)
-} else {
-    main()
-}
-
 function main() {
-    const wss = new WebSocketServer({ port: 37123 });
+    const wss = new WebSocketServer({ port: SERVER_PORT });
 
     log("Listening for connections...")
 
@@ -84,15 +65,16 @@ function handleCalendarEvents(calendarEventsRaw) {
     console.log(calendarData);
 
     let alarms = createAlarms(calendarData)
-    if (alarms.length > 12) {
+    let alarmsFiltered = filterAlarms(alarms)
+    if (alarmsFiltered.length > 12) {
         runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
         runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
         runCmd(`notify-send -i face-glasses "outlook exporter: High number of events"`)
         return
     }
 
-    let deDuplicated = removeDuplicates(alarms)
-    setAlarms(deDuplicated)
+    let alarmsDeDuplicated = removeDuplicates(alarmsFiltered)
+    setAlarms(alarmsDeDuplicated)
 }
 
 function createAlarms(calendarEvents) {
@@ -112,6 +94,28 @@ function createAlarms(calendarEvents) {
     }
 
     return alarms
+}
+
+function filterAlarms(alarmsInput) {
+    let alarmsOutput = []
+
+    for (const alarm of alarmsInput) {
+        // Don't create alarms if today is not same day as event
+        let aDate = alarm.time.toLocaleDateString()
+        let nowDate = new Date().toLocaleDateString()
+        if (aDate != nowDate) {
+            continue
+        }
+
+        // Don't create alarms for past events
+        if (alarm.time < new Date()) {
+            continue
+        }
+
+        alarmsOutput.push(alarm)
+    }
+
+    return alarmsOutput
 }
 
 function removeDuplicates(alarms) {
@@ -163,15 +167,6 @@ function parseStartDateFromLabel(text) {
 
     let startTime = new Date(Date.parse(day + " " + startHour))
     // let endTime = new Date(Date.parse(day + " " + endHour))
-
-    if (startTime.getDate() !== new Date().getDate()) {
-        throw new ValidationError()
-    }
-
-    if (startTime < new Date()) {
-        // Can't create alarms in the past
-        throw new ValidationError()
-    }
 
     return startTime
 }
