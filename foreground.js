@@ -46,5 +46,5 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
             console.log(txt)
             ws.send(txt)
         }
-    }, 1000);
+    }, 1500);
 });
