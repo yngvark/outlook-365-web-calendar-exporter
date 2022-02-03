@@ -190,7 +190,8 @@ function alert(message, atTime) {
     log("Creating alert for " + atTime + " - " + message)
 
     let atTimeUrlEncoded = encodeURIComponent(atTime)
-    runCmd(`$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alert.sh "${atTime}" "${atTimeUrlEncoded}" "${message}"`)
+    let messageUrlEncoded = encodeURIComponent(message)
+    runCmd(`$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alert.sh "${atTime}" "${atTimeUrlEncoded}" "${messageUrlEncoded}"`)
 }
 
 function escape(msg) {
