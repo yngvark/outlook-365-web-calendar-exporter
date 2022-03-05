@@ -46,8 +46,8 @@ path = ""
 print(f"Detected output: {sound_out}")
 
 if sound_out == SoundOutput.SPEAKER:
-    path = pathlib.Path(gitDir).joinpath("yngvark/outlook-365-web-calendar-exporter/server/alarm-6.wav")
+    path = pathlib.Path(gitDir).joinpath("yngvark/outlook-365-web-calendar-exporter/server/alarm-speaker.wav")
 else:
-    path = pathlib.Path(gitDir).joinpath("yngvark/outlook-365-web-calendar-exporter/server/alarm-2.wav")
+    path = pathlib.Path(gitDir).joinpath("yngvark/outlook-365-web-calendar-exporter/server/alarm-headset.wav")
 
 subprocess.run(["aplay", path])
