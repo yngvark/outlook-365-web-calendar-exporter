@@ -55,6 +55,7 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl start outlook-exporter
 sudo systemctl enable outlook-exporter
+sudo systemctl status outlook-exporter
 
 journalctl -xe # For å se litt logger
 tail -f /var/log/syslog # For å se litt andre logger
