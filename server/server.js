@@ -13,7 +13,7 @@ if (testing) {
     let text1 = `
         [
             {
-                "label": "event from Tuesday, January 11, 2022 23:26 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
+                "label": "event from Tuesday, April 02, 2022 05:06 to 10:00 Planning   location https://whereby.com/somwehere organizer Guybrush Threepwood",
                 "title": "Planning\\nhttps://whreby.com/somewhere\\nfrom 09:00 to 10:00"
             }
         ]
@@ -21,7 +21,7 @@ if (testing) {
 
     let text2 = `
     `
-    handleCalendarEvents(text2)
+    handleCalendarEvents(text1)
 } else {
     main()
 }
@@ -74,6 +74,7 @@ function handleCalendarEvents(calendarEventsRaw) {
     }
 
     let alarmsDeDuplicated = removeDuplicates(alarmsFiltered)
+    // setAlarms(alarmsDeDuplicated)
     setAlarms(alarmsDeDuplicated)
 }
 
@@ -137,8 +138,27 @@ function setAlarms(alarms) {
     cleanOldAlarms()
 
     for (const a of alarms) {
-        alert(a.meetingTitle, toAtTime(a.time))
+        alert(a.meetingTitle, toLinuxDate(a.time))
     }
+}
+
+// agh..
+function toLinuxDate(time) {
+    let t = time
+
+    let YYYY = t.getFullYear()
+    let month = fillZeroes(t.getMonth() + 1)
+    let DD = fillZeroes(t.getDate())
+
+    let HH = fillZeroes(t.getHours())
+    let min = fillZeroes(t.getMinutes())
+    let SS = fillZeroes(t.getSeconds())
+
+    return `${YYYY}-${month}-${DD} ${HH}:${min}:${SS}`
+}
+
+function fillZeroes(num) {
+    return ("0" + num).slice(-2);
 }
 
 function cleanOldAlarms() {
@@ -171,22 +191,19 @@ function parseStartDateFromLabel(text) {
     return startTime
 }
 
-// at means the linux tool "at" (see "man at")
-// example output: 23:45
-function toAtTime(d) {
-    return fillZeroes(d.getHours()) + ":" + fillZeroes(d.getMinutes())
-}
+function alert(message, dateTime) {
+    log("Creating alert for " + dateTime + " - " + message)
 
-function fillZeroes(hours) {
-    return ("0" + hours).slice(-2);
-}
+    let workingDirectory="$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server"
 
-function alert(message, atTime) {
-    log("Creating alert for " + atTime + " - " + message)
+    let HH = fillZeroes(t.getHours())
+    let min = fillZeroes(t.getMinutes())
+    let time = HH + ":" + min
 
-    let atTimeUrlEncoded = encodeURIComponent(atTime)
-    let messageUrlEncoded = encodeURIComponent(message)
-    runCmd(`$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alert.sh "${atTime}" "${atTimeUrlEncoded}" "${messageUrlEncoded}"`)
+    //runCmd(`$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/alert.sh "${atTime}" "${atTimeUrlEncoded}" "${messageUrlEncoded}"`)
+    runCmd(`sudo systemd-run --property=WorkingDirectory=${workingDirectory} --property=TimeoutSec=1sec ` +
+        `--on-calendar="${dateTime}" --setenv YK_GIT_DIR=$YK_GIT_DIR --setenv IFTTT_KEY=$IFTTT_KEY ` +
+        `--setenv PATH_SWAUDIO=$YK_PATH_DIR ${workingDirectory}/alert.sh "${time}" "${message}"`)
 }
 
 function escape(msg) {
@@ -206,10 +223,13 @@ function escape(msg) {
 
 function runCmd(cmd) {
     if (testing) {
+        log("Not running command: " + cmd)
         return
+    } else {
+        log("Running command: " + cmd)
     }
 
-    log("Running command: " + cmd)
+    // log("Running command: " + cmd)
 
     execSync(cmd, (error, stdout, stderr) => {
         if (error) {

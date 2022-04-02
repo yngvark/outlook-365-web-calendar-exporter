@@ -16,11 +16,23 @@ def print_err(txt):
 
 
 def get_current_sound_output():
-    proc = subprocess.run(["swaudio"], check=True, capture_output=True, text=True)
+    PATH_SWAUDIO = os.environ.get("PATH_SWAUDIO")
+    if PATH_SWAUDIO is None:
+        print_err("PATH_SWAUDIO env missing")
+        sys.exit(1)
+
+    output = ""
+    swaudio = os.path.join(PATH_SWAUDIO, "swaudio")
+    try:
+        output = subprocess.check_output(swaudio, text=True)
+    except subprocess.CalledProcessError as e:
+        print("swaudio failed with:")
+        print(e.output)
+        sys.exit(1)
 
     read_now = False
-    for line in proc.stdout.splitlines():
-        print("stdout:", line)
+    for line in output.splitlines():
+        # print("stdout:", line)
 
         if read_now:
             if "pci-0000_0a_00.4" in line.lower():
