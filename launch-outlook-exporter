@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+SCREEN_NAME=outlook
+
+function clearScreens() {
+    # https://stackoverflow.com/a/14447172/915441
+    SCREENS=$(screen -ls | tail +2 | grep outlook | grep -o '[0-9]\{5\}')
+
+    for session in $(screen -ls | tail +2 | grep outlook | grep -o '[0-9]\{5\}')
+    do
+        echo "Removing screen session: ${session}"
+        screen -S "${session}" -X quit;
+    done
+}
+
+GREP_STRING="outlook-365"
+RUNNING=$(ps aux | grep $GREP_STRING | grep -v grep | wc -l)
+
+if [[ ! $RUNNING -eq 0 ]]; then
+    echo App is running, not doing anything.
+    exit 0
+fi
+
+clearScreens
+
+# https://stackoverflow.com/a/20558385/915441
+echo Starting outlook-exporter
+
+screen -S outlook -d -m
+screen -r outlook -X stuff $'launch-outlook-exporter-starter && sleep 1\n'
+# screen -X -S outlook quit # TODO  denne ødelegger
+
+ps aux | grep $GREP_STRING | grep -v grep

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo $(date +"%H:%M:%S") Starting Outlook exporter
+(node /home/xxxxxxxxxx/outlook-365-web-calendar-exporter/server/server.js &> /tmp/outlook.log) &
