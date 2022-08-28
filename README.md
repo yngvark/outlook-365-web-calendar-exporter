@@ -24,9 +24,9 @@ Sett miljøvaribaler
 
 ## 2. Sett i gang server-delen av appen
 
-I OS-et ditt, legg til `launch-outlook-exporter`.
+I OS-et ditt, legg til `outlook-exporter-start`.
 
-Putt `launch-outlook-exporter-starter` i et sted PATH-en din.
+Putt `outlook-exporter-starter` i et sted PATH-en din.
 
 ## 3. Test
 
