@@ -21,16 +21,6 @@ function waitForElm(selector) {
 waitForElm("div[aria-label*='event from']").then((elm) => {
     // Element is almost ready, using a setTimeout to be actual ready
     setTimeout(function() {
-        console.log("LOL____---------------------------------------------------")
-        console.log("LOL____---------------------------------------------------")
-        console.log("LOL____---------------------------------------------------")
-        console.log("LOL____---------------------------------------------------")
-        console.log("LOL____---------------------------------------------------")
-        console.log("LOL____---------------------------------------------------")
-        console.log("LOL____---------------------------------------------------")
-        console.log("LOL____---------------------------------------------------")
-        runStatistics()
-
         // Test in browser console with: $("div[aria-label*='event from']")
         let calendarEvents = document.querySelectorAll("div[aria-label*='event from']")
 
@@ -55,6 +45,8 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
             console.log("Connected to outlook exporter backound. Sending calendar data.", new Date())
             console.log(txt)
             ws.send(txt)
+
+            runStatistics(calendarData)
         }
     }, 3000);
 });

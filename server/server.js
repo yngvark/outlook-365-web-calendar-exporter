@@ -1,7 +1,6 @@
 import { WebSocketServer } from 'ws'
 import { execSync } from 'child_process'
-import { Alarm } from './alarm.js'
-import { ValidationError } from './validation_error.js'
+import { createAlarms } from './createAlarm.js'
 // import * as fs from 'fs'
 
 const testing = false
@@ -74,25 +73,6 @@ function handleCalendarEvents(calendarEventsRaw) {
     setAlarms(alarmsDeDuplicated)
 }
 
-function createAlarms(calendarEvents) {
-    let alarms = []
-    for (const calendarEvent of calendarEvents) {
-        let startDate
-        try {
-            startDate = parseStartDateFromLabel(calendarEvent.label)
-            startDate.setMinutes(startDate.getMinutes() - 1)
-        } catch (e) {
-            continue
-        }
-
-        let meetingTitle = calendarEvent.title.split('\n')[0]
-
-        alarms.push(new Alarm(startDate, meetingTitle))
-    }
-
-    return alarms
-}
-
 function filterAlarms(alarmsInput) {
     let alarmsOutput = []
 
@@ -140,32 +120,6 @@ function setAlarms(alarms) {
 
 function cleanOldAlarms() {
     runCmd("$YK_GIT_DIR/yngvark/outlook-365-web-calendar-exporter/server/atclean.sh")
-}
-
-function parseStartDateFromLabel(text) {
-    if (!text.startsWith("event from")) {
-        throw new ValidationError()
-    }
-
-    let currentYear = new Date().getFullYear()
-    let dayRegex = `event from ([a-zA-Z0-9, ]+ ${currentYear})`
-    let dayMatches = text.match(dayRegex)
-
-    if (dayMatches == null) {
-        throw new ValidationError()
-    }
-
-    let day = dayMatches[1]
-
-    let timeOfDayRegex = `${currentYear} ([0-9:]+) to ([0-9:]+)`
-    let timeOfDayMatches = text.match(timeOfDayRegex)
-    let startHour = timeOfDayMatches[1]
-    // let endHour = timeOfDayMatches[2]
-
-    let startTime = new Date(Date.parse(day + " " + startHour))
-    // let endTime = new Date(Date.parse(day + " " + endHour))
-
-    return startTime
 }
 
 // at means the linux tool "at" (see "man at")
