@@ -1,1 +1,5 @@
-console.log("Hello3")
+console.log("Hello44")
+
+export function runStatistics() {
+    console.log("OWOWOWOHOHWOO")
+}
