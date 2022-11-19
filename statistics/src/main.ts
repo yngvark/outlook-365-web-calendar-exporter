@@ -1,9 +1,8 @@
-import {CalendarEvent} from "./calendarEvent";
-import { runStats } from "./stats";
-import {CalendarData} from "./calendarData";
-import { parseDateFromLabel } from "../../server/createAlarm.js";
-
-console.log("Hello555")
+import {CalendarEvent} from "./calendarEvent"
+import { runStats } from "./stats"
+import {CalendarData} from "./calendarData"
+import { parseDateFromLabel } from "../../server/createAlarm.js"
+import {Week} from "./week";
 
 function runAndShowStatistics(calendarData:CalendarData[]) {
     let calendarEvents = createCalendarEvents(calendarData)
@@ -16,7 +15,8 @@ function runAndShowStatistics(calendarData:CalendarData[]) {
     console.log("---------------------------------------------------------------")
     console.log("---------------------------------------------------------------")
 
-    runStats(calendarEvents)
+    let weeks = runStats(calendarEvents)
+    displayMeetingPercentage(weeks)
 }
 
 function createCalendarEvents(calendarEventsRaw:CalendarData[]):CalendarEvent[] {
@@ -39,5 +39,20 @@ function createCalendarEvents(calendarEventsRaw:CalendarData[]):CalendarEvent[] 
     return calendarEvents
 }
 
+
+function displayMeetingPercentage(weeks:Week[]):void {
+    weeks.forEach(week => {
+        // Example: "#header_2022-11-20"
+        let querySelector = "#header_" + week.endOfWeek.getFullYear() + "-" + week.getOneIndexedMonth() + "-" + week.endOfWeek.getDate()
+
+        let sundayNode = document.querySelector(querySelector)
+        if (sundayNode != null) {
+            let date: String = sundayNode.innerHTML
+            sundayNode.innerHTML = date + " (" + week.meetingPercentage + "%)"
+        } else {
+            console.log("warning: could not find node for querySelector", querySelector)
+        }
+    })
+}
 
 console.log(runAndShowStatistics)

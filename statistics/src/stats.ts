@@ -2,18 +2,18 @@ import { getWeekNumber } from "./weekNumber.js";
 import { CalendarEvent } from "./calendarEvent";
 import { Week } from "./week";
 
-export function runStats(calendarEvents:CalendarEvent[]) {
+export function runStats(calendarEvents:CalendarEvent[]):Week[] {
     // Group events by week number
     let weekNumberToEvents: Map<string, CalendarEvent[]> = new Map()
 
     for (const event of calendarEvents) {
-        let weekNumber = getWeekNumber(event.startDate) as string
+        let weekNumber = getWeekNumber(event.startDate)[1] as unknown as string
 
-        if (weekNumberToEvents[weekNumber] == undefined) {
-            weekNumberToEvents[weekNumber] = []
+        if (weekNumberToEvents.get(weekNumber) == undefined) {
+            weekNumberToEvents.set(weekNumber, [])
         }
 
-        weekNumberToEvents[weekNumber].push(event)
+        weekNumberToEvents.get(weekNumber)!.push(event)
     }
 
     // Calculate statistics
@@ -38,7 +38,7 @@ export function runStats(calendarEvents:CalendarEvent[]) {
     // Display statistics
     weeks[0] = new Week(getEndOfWeek(new Date()), "53")
 
-    displayMeetingPercentage(weeks)
+    return weeks
 }
 
 class WeekTemp {
@@ -56,16 +56,3 @@ function getEndOfWeek(d:Date):Date {
 
     return lastday
 }
-
-function displayMeetingPercentage(weeks:Week[]) {
-    weeks.forEach(week => {
-        // Example: "#header_2022-11-20"
-        let querySelector = "#header_" + week.endOfWeek.getFullYear() + "-" + week.getOneIndexedMonth() + "-" + week.endOfWeek.getDate()
-
-        let sundayNode = document.querySelector(querySelector)
-
-        let date: String = sundayNode.innerHTML
-        sundayNode.innerHTML = date + " (" + week.meetingPercentage + "%)"
-    })
-}
-

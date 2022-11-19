@@ -1,18 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "module": "ESNext",
-        "sourceMap": true,
-      "lib": [
-        "dom",
-        "es5",
-        "scripthost",
-        "es2015.collection"
-      ]
+      "allowJs": true,
+      "target": "es2016",
+      "module": "ES2020",
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
     },
     "include": [
         "src/**/*",
-        "ts_definitions/**/*.d.ts"
     ],
     "exclude": [
         "./test/",
@@ -20,22 +17,3 @@
         "./dist/"
     ]
 }
-
-//        "esModuleInterop": true,
-//        "allowUnreachableCode": false,
-//        "strictPropertyInitialization": false,
-//        "lib": ["dom", "es5", "esnext"]
-//    }
-//    "files": [
-//        "ts_definitions/phaser.d.ts"
-//    ],
-//    "include": [
-//        "game/**/*",
-//        "ts_definitions/**/*.d.ts"
-//    ]
-//    "exclude": [
-//        "./test/",
-//        "./node_modules/",
-//        "./dist/"
-//    ]
-//}
