@@ -1,40 +1,25 @@
+import {CalendarEvent} from "./calendarEvent";
+import { runStats } from "./stats";
+import {CalendarData} from "./calendarData";
 import { parseDateFromLabel } from "../../server/createAlarm.js";
 
-console.log("Hello44")
+console.log("Hello555")
 
-interface CalendarEventRaw {
-    title:String
-    label:String
-}
+function runAndShowStatistics(calendarData:CalendarData[]) {
+    let calendarEvents = createCalendarEvents(calendarData)
 
-class CalendarEvent {
-    private readonly meetingTitle:String
-    private readonly startDate:Date
-    private readonly endDate:Date
-
-    constructor(meetingTitle: string, startDate, endDate) {
-        this.meetingTitle = meetingTitle
-        this.startDate = startDate
-        this.endDate = endDate
-    }
-
-}
-
-function runStatistics(raw:CalendarEventRaw[]) {
-    console.log("OWOWOWOHOHWOO")
-    console.log("Prcessing events", raw)
-
-    let calendarEvents = createCalendarEvents(raw)
-    console.log("---------------------------------------------------------------")
     console.log("---------------------------------------------------------------")
     console.log("---------------------------------------------------------------")
     console.log("---------------------------------------------------------------")
     console.log(calendarEvents)
     console.log("---------------------------------------------------------------")
     console.log("---------------------------------------------------------------")
+    console.log("---------------------------------------------------------------")
+
+    runStats(calendarEvents)
 }
 
-function createCalendarEvents(calendarEventsRaw:CalendarEventRaw[]):CalendarEvent[] {
+function createCalendarEvents(calendarEventsRaw:CalendarData[]):CalendarEvent[] {
     let calendarEvents = []
     for (const calendarEvent of calendarEventsRaw) {
         let startDate, endDate
@@ -55,4 +40,4 @@ function createCalendarEvents(calendarEventsRaw:CalendarEventRaw[]):CalendarEven
 }
 
 
-console.log(runStatistics)
+console.log(runAndShowStatistics)

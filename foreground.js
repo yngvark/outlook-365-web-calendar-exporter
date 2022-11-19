@@ -46,7 +46,7 @@ waitForElm("div[aria-label*='event from']").then((elm) => {
             console.log(txt)
             ws.send(txt)
 
-            runStatistics(calendarData)
+            runAndShowStatistics(calendarData)
         }
     }, 3000);
 });
