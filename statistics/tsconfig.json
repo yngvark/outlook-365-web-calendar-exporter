@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "ESNext",
+        "sourceMap": true
+    },
+    "include": [
+        "src/**/*",
+        "ts_definitions/**/*.d.ts"
+    ],
+    "exclude": [
+        "./test/",
+        "./node_modules/",
+        "./dist/"
+    ]
+}
+
+//        "esModuleInterop": true,
+//        "allowUnreachableCode": false,
+//        "strictPropertyInitialization": false,
+//        "lib": ["dom", "es5", "esnext"]
+//    }
+//    "files": [
+//        "ts_definitions/phaser.d.ts"
+//    ],
+//    "include": [
+//        "game/**/*",
+//        "ts_definitions/**/*.d.ts"
+//    ]
+//    "exclude": [
+//        "./test/",
+//        "./node_modules/",
+//        "./dist/"
+//    ]
+//}
