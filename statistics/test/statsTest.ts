@@ -9,6 +9,10 @@ describe('Yoyo test', () => {
                 new Date(2020,1,1,2),
                 new Date(2020,1,1,3)
             ),
+            new CalendarEvent("Planning",
+                new Date(2020,1,2,2),
+                new Date(2020,1,2,3)
+            ),
         ]
 
         let weeks = runStats(calendarEvents)

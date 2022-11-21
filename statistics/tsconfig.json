@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
       "allowJs": true,
-      "target": "es2016",
-      "module": "ES2020",
+      "target": "ES2022",
+      "module": "commonjs",
       "sourceMap": true,
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
@@ -15,5 +15,5 @@
         "./test/",
         "./node_modules/",
         "./dist/"
-    ]
+    ],
 }

@@ -11,12 +11,20 @@ export default {
 
     plugins: [
         //  See https://www.npmjs.com/package/rollup-plugin-typescript2 for config options
-        typescript(),
+        typescript({
+            // I want to import dayjs, which of course is a nightmare in this god-damned module-hell
+            // ecosystem:
+            // https://github.com/ezolenko/rollup-plugin-typescript2/issues/258
+            // https://www.npmjs.com/package/rollup-plugin-typescript2
+            tsconfigOverride: {
+                compilerOptions: {
+                    module: 'es2020'
+                }
+            }
+        }),
     ],
 
     output: {
         file: './dist/main.js',
-    }
-
-
+    },
 };

@@ -1,9 +1,14 @@
 import { getWeekNumber } from "./weekNumber.js";
 import { CalendarEvent } from "./calendarEvent";
 import { Week } from "./week";
+import dayjs from 'dayjs'
+
+// import * as dayjs from 'dayjs'
 
 export function runStats(calendarEvents:CalendarEvent[]):Week[] {
     // Group events by week number
+    dayjs().format()
+
     let weekNumberToEvents: Map<string, CalendarEvent[]> = new Map()
 
     for (const event of calendarEvents) {
@@ -21,8 +26,9 @@ export function runStats(calendarEvents:CalendarEvent[]):Week[] {
     weekNumberToEvents.forEach((calendarEvents:CalendarEvent[], weekNumber) => {
         console.log("Weeknumber", weekNumber, calendarEvents)
 
+        let meetingDurationSum = 0
         calendarEvents.forEach(calendarEvent => {
-
+            // (calendarEvent as CalendarEvent).duration()
         })
 
         // weeks.push(new Week(
