@@ -1,13 +1,16 @@
 import { getWeekNumber } from "./weekNumber.js";
 import { CalendarEvent } from "./calendarEvent";
 import { Week } from "./week";
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
+import * as duration from 'dayjs/plugin/duration';
+import {Duration} from "dayjs/plugin/duration";
 
 // import * as dayjs from 'dayjs'
 
+const availableHoursAWeek = 37.5
+
 export function runStats(calendarEvents:CalendarEvent[]):Week[] {
     // Group events by week number
-    dayjs().format()
 
     let weekNumberToEvents: Map<string, CalendarEvent[]> = new Map()
 
@@ -22,19 +25,28 @@ export function runStats(calendarEvents:CalendarEvent[]):Week[] {
     }
 
     // Calculate statistics
+    dayjs.extend(duration)
     let weeks:Week[] = []
     weekNumberToEvents.forEach((calendarEvents:CalendarEvent[], weekNumber) => {
         console.log("Weeknumber", weekNumber, calendarEvents)
 
-        let meetingDurationSum = 0
+        let meetingDurationSum:Duration = dayjs.duration(0)
+        console.log("YEAH", dayjs().format())
+
         calendarEvents.forEach(calendarEvent => {
-            // (calendarEvent as CalendarEvent).duration()
+            let eventDuration = (calendarEvent as CalendarEvent).duration()
+            meetingDurationSum = meetingDurationSum.add(eventDuration)
         })
 
-        // weeks.push(new Week(
-        //     getEndOfWeek(calendarEvents[0].startDate),
-        //     "100")
-        // )
+        console.log(meetingDurationSum.asHours())
+
+        let percentage = Math.round(meetingDurationSum.asHours() / availableHoursAWeek * 100)
+        let meetingPercentage = percentage + "%"
+
+        weeks.push(new Week(
+            getEndOfWeek(calendarEvents[0].startDate),
+            meetingPercentage)
+        )
     })
 
     // for (const event of calendarEvents) {
@@ -42,7 +54,7 @@ export function runStats(calendarEvents:CalendarEvent[]):Week[] {
     // }
 
     // Display statistics
-    weeks[0] = new Week(getEndOfWeek(new Date()), "53")
+    // weeks[0] = new Week(getEndOfWeek(new Date()), "53")
 
     return weeks
 }

@@ -1,5 +1,3 @@
-import { CalendarEvent } from "./calendarEvent";
-
 export class Week {
     // public readonly weekNumber:String
     public readonly endOfWeek:Date
@@ -15,8 +13,3 @@ export class Week {
         return this.endOfWeek.getMonth() + 1;
     }
 }
-
-class Weeks {
-
-}
-

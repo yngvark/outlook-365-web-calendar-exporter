@@ -3,6 +3,7 @@
 // import replace from '@rollup/plugin-replace';
 // import serve from 'rollup-plugin-serve';
 import typescript from 'rollup-plugin-typescript2';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
     input: [
@@ -18,10 +19,11 @@ export default {
             // https://www.npmjs.com/package/rollup-plugin-typescript2
             tsconfigOverride: {
                 compilerOptions: {
-                    module: 'es2020'
+                    "module": 'es2020'
                 }
             }
         }),
+        nodeResolve()
     ],
 
     output: {

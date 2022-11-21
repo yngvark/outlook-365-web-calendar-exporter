@@ -5,6 +5,7 @@
       "module": "commonjs",
       "sourceMap": true,
       "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
       "forceConsistentCasingInFileNames": true,
       "strict": true,
     },
