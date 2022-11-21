@@ -1,11 +1,6 @@
 import { getWeekNumber } from "./weekNumber.js";
 import { CalendarEvent } from "./calendarEvent";
 import { Week } from "./week";
-import dayjs from 'dayjs';
-import * as duration from 'dayjs/plugin/duration';
-import {Duration} from "dayjs/plugin/duration";
-
-// import * as dayjs from 'dayjs'
 
 const availableHoursAWeek = 37.5
 
@@ -25,23 +20,18 @@ export function runStats(calendarEvents:CalendarEvent[]):Week[] {
     }
 
     // Calculate statistics
-    dayjs.extend(duration)
     let weeks:Week[] = []
     weekNumberToEvents.forEach((calendarEvents:CalendarEvent[], weekNumber) => {
-        console.log("Weeknumber", weekNumber, calendarEvents)
-
-        let meetingDurationSum:Duration = dayjs.duration(0)
-        console.log("YEAH", dayjs().format())
+        let meetingDurationSum:number = 0
 
         calendarEvents.forEach(calendarEvent => {
-            let eventDuration = (calendarEvent as CalendarEvent).duration()
-            meetingDurationSum = meetingDurationSum.add(eventDuration)
+            let eventDuration = (calendarEvent as CalendarEvent).durationInMs()
+            meetingDurationSum += eventDuration
         })
 
-        console.log(meetingDurationSum.asHours())
 
-        let percentage = Math.round(meetingDurationSum.asHours() / availableHoursAWeek * 100)
-        let meetingPercentage = percentage + "%"
+        let meetingDurationSumHours = meetingDurationSum / 1000 / 60 / 60
+        let meetingPercentage:String = Math.round(meetingDurationSumHours / availableHoursAWeek * 100) + ""
 
         weeks.push(new Week(
             getEndOfWeek(calendarEvents[0].startDate),

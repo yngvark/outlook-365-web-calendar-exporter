@@ -3,7 +3,6 @@
 // import replace from '@rollup/plugin-replace';
 // import serve from 'rollup-plugin-serve';
 import typescript from 'rollup-plugin-typescript2';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
     input: [
@@ -22,8 +21,7 @@ export default {
                     "module": 'es2020'
                 }
             }
-        }),
-        nodeResolve()
+        })
     ],
 
     output: {

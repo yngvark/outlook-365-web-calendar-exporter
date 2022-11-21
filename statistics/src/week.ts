@@ -12,4 +12,8 @@ export class Week {
     getOneIndexedMonth() {
         return this.endOfWeek.getMonth() + 1;
     }
+
+    getDateWithLeadingZero() {
+        return this.endOfWeek.getDate().toString().padStart(2, '0');
+    }
 }

@@ -1,6 +1,3 @@
-import * as dayjs from 'dayjs'
-import {Duration} from "dayjs/plugin/duration";
-
 export class CalendarEvent {
     public readonly meetingTitle:String
     public readonly startDate:Date
@@ -12,7 +9,16 @@ export class CalendarEvent {
         this.endDate = endDate
     }
 
-    public duration():Duration {
-        return dayjs.duration({ hours: 1 })
+    public durationInMs():number {
+        return this.subtract(this.endDate, this.startDate)
+    }
+
+    // https://en.wikipedia.org/wiki/Subtraction
+    private subtract(minuend:Date, subtrahend:Date):number {
+        const minuendUtc = Date.UTC(minuend.getFullYear(), minuend.getMonth(), minuend.getDate(), minuend.getHours(), minuend.getMinutes(), minuend.getSeconds(), minuend.getMilliseconds());
+        const subtrahendUtc = Date.UTC(subtrahend.getFullYear(), subtrahend.getMonth(), subtrahend.getDate(), subtrahend.getHours(), subtrahend.getMinutes(), subtrahend.getSeconds(), subtrahend.getMilliseconds());
+
+        return minuendUtc - subtrahendUtc;
     }
 }
+

@@ -5,17 +5,16 @@ import { parseDateFromLabel } from "../../server/createAlarm.js"
 import {Week} from "./week";
 
 function runAndShowStatistics(calendarData:CalendarData[]) {
+    console.log("------------------------------------------------------------")
+    console.log("Running statistics")
+    console.log("------------------------------------------------------------")
+
     let calendarEvents = createCalendarEvents(calendarData)
-
-    console.log("---------------------------------------------------------------")
-    console.log("---------------------------------------------------------------")
-    console.log("---------------------------------------------------------------")
     console.log(calendarEvents)
-    console.log("---------------------------------------------------------------")
-    console.log("---------------------------------------------------------------")
-    console.log("---------------------------------------------------------------")
-
     let weeks = runStats(calendarEvents)
+
+    console.log("Weeks", weeks)
+
     displayMeetingPercentage(weeks)
 }
 
@@ -43,16 +42,25 @@ function createCalendarEvents(calendarEventsRaw:CalendarData[]):CalendarEvent[] 
 function displayMeetingPercentage(weeks:Week[]):void {
     weeks.forEach(week => {
         // Example: "#header_2022-11-20"
-        let querySelector = "#header_" + week.endOfWeek.getFullYear() + "-" + week.getOneIndexedMonth() + "-" + week.endOfWeek.getDate()
+        let year = week.endOfWeek.getFullYear().toString().padStart(2, '0')
+        let month = week.getOneIndexedMonth().toString().padStart(2, '0')
+        let day = week.endOfWeek.getDate().toString().padStart(2, '0')
+
+        let querySelector = "#header_" + year + "-" + month + "-" + day
+
+        console.log("querySelector", querySelector)
 
         let sundayNode = document.querySelector(querySelector)
         if (sundayNode != null) {
-            let date: String = sundayNode.innerHTML
-            sundayNode.innerHTML = date + " (" + week.meetingPercentage + "%)"
+            // let date: String = sundayNode.innerHTML
+            sundayNode.innerHTML = day + " (" + week.meetingPercentage + "%)"
         } else {
             console.log("warning: could not find node for querySelector", querySelector)
         }
     })
 }
 
+
+
+console.log("STATISTICS LOADED")
 console.log(runAndShowStatistics)
