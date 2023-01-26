@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "dev": "rollup --config rollup.config.dev.js",
-    "build": "rollup --config rollup.config.dist.js",
+    "build": "rollup --config rollup.config.js",
     "watch": "rollup --watch --config rollup.config.dev.js",
     "tsc": "tsc --build tsconfig.json",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require ts-node/register 'test/**/*.ts'"
