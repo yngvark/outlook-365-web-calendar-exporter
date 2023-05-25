@@ -41,13 +41,12 @@ function createCalendarEvents(calendarEventsRaw:CalendarData[]):CalendarEvent[] 
 
 function displayMeetingPercentage(weeks:Week[]):void {
     weeks.forEach(week => {
-        // Example: "#header_2022-11-20"
         let year = week.endOfWeek.getFullYear().toString().padStart(2, '0')
         let month = week.getOneIndexedMonth().toString().padStart(2, '0')
         let day = week.endOfWeek.getDate().toString().padStart(2, '0')
 
-        let querySelector = "#header_" + year + "-" + month + "-" + day
-
+        // Example querySelector: div[id^="header_2023-05-21"]
+        let querySelector = 'div[id^="header_' + year + '-' + month + '-' + day + '"]'
         console.log("querySelector", querySelector)
 
         let sundayNode = document.querySelector(querySelector)
